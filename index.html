@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아이와 함께 웃는 곳만 골랐다! - 남매 맞춤 나들이 가이드</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome (for icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Noto Sans KR) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #Fdfbf7; /* Warm neutral background */
+            color: #333;
+        }
+        .accent-color {
+            color: #FF6B6B; /* Soft Red/Coral for highlights */
+        }
+        .bg-accent {
+            background-color: #FF6B6B;
+        }
+        .secondary-bg {
+            background-color: #4ECDC4; /* Soft Teal for secondary elements */
+        }
+        
+        /* Chart Container Styling - Responsive & Constrained */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 400px;
+        }
+        
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Custom Scrollbar for card lists */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 3px;
+        }
+
+        /* Card Hover Effect */
+        .place-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .place-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Modal Transition */
+        #detailModal {
+            transition: opacity 0.3s ease;
+        }
+        #detailModal.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        #detailModal.flex {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="bg-amber-50/30">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-child-reaching text-2xl text-[#FF6B6B]"></i>
+                <h1 class="text-xl font-bold text-gray-800">남매 나들이 가이드</h1>
+            </div>
+            <div class="hidden md:flex space-x-6 text-gray-600 font-medium">
+                <a href="#intro" class="hover:text-[#FF6B6B] transition">소개</a>
+                <a href="#checklist" class="hover:text-[#FF6B6B] transition">준비물</a>
+                <a href="#explorer" class="hover:text-[#FF6B6B] transition">장소 찾기</a>
+                <a href="#survival" class="hover:text-[#FF6B6B] transition">생존 비법</a>
+            </div>
+            <!-- Mobile Menu Button (Hamburger) -->
+            <button id="mobileMenuBtn" class="md:hidden text-gray-600">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t p-4 flex flex-col space-y-3">
+            <a href="#intro" class="block text-gray-600">소개</a>
+            <a href="#checklist" class="block text-gray-600">준비물</a>
+            <a href="#explorer" class="block text-gray-600">장소 찾기</a>
+            <a href="#survival" class="block text-gray-600">생존 비법</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="intro" class="relative bg-white py-12 md:py-20 overflow-hidden">
+        <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+            <span class="inline-block py-1 px-3 rounded-full bg-orange-100 text-orange-600 text-sm font-semibold mb-4">3살 터울 남매 맘의 실전 기록</span>
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                "형아는 배우고,<br class="md:hidden"> 동생은 즐겁다!"
+            </h2>
+            <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                8살 첫째와 5살 둘째, 둘 다 만족시키기 힘드셨죠?<br>
+                직접 발로 뛰며 검증한 <strong>실패 없는 나들이 장소</strong>를 모았습니다.
+            </p>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center mt-12">
+                <div class="text-left bg-gray-50 p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold mb-3"><i class="fa-solid fa-quote-left text-[#FF6B6B] mr-2"></i>이런 분들께 추천해요</h3>
+                    <ul class="space-y-3 text-gray-700">
+                        <li class="flex items-start"><i class="fa-solid fa-check text-green-500 mt-1 mr-2"></i> <span>첫째는 시시해하고 둘째는 힘들어하는 가족</span></li>
+                        <li class="flex items-start"><i class="fa-solid fa-check text-green-500 mt-1 mr-2"></i> <span>매번 어디 갈지 검색만 하다 지치는 부모님</span></li>
+                        <li class="flex items-start"><i class="fa-solid fa-check text-green-500 mt-1 mr-2"></i> <span>아이 둘 케어하며 힐링도 하고 싶은 분</span></li>
+                    </ul>
+                </div>
+                <!-- Intro Chart: Curation Balance -->
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                    <h4 class="text-sm font-semibold text-center text-gray-500 mb-2">가이드북 테마 구성 비율</h4>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="introChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Checklist Section -->
+    <section id="checklist" class="py-16 bg-[#fff5f5]">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-800">🎒 엄마의 가방 속 '필살기'</h2>
+                <p class="text-gray-600 mt-2">출발 전 이것만 챙겨도 나들이 난이도가 절반으로 뚝!</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Checklist Card -->
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-bold mb-4 text-[#FF6B6B] border-b pb-2">필수 체크리스트</h3>
+                    <div class="space-y-3" id="checklistContainer">
+                        <!-- JS generated items -->
+                    </div>
+                </div>
+
+                <!-- Tips Card -->
+                <div class="bg-white p-6 rounded-xl shadow-md flex flex-col justify-center">
+                    <div class="mb-6">
+                        <h4 class="font-bold text-lg mb-2 text-gray-800"><i class="fa-solid fa-cookie-bite text-orange-500 mr-2"></i>나이별 간식 전략</h4>
+                        <p class="text-sm text-gray-600"><strong>8살:</strong> 당 충전 빠른 초코바 (활동량 많음)<br><strong>5살:</strong> 한입 젤리, 비타민 (지루함 달래기)</p>
+                    </div>
+                    <div class="mb-6">
+                        <h4 class="font-bold text-lg mb-2 text-gray-800"><i class="fa-solid fa-calculator text-blue-500 mr-2"></i>지루함 타파! 계산기</h4>
+                        <p class="text-sm text-gray-600">8살 아이에게 천원짜리 계산기를 쥐여주세요. "오늘 먹을 음식 값 더해볼까?" 하면 30분 순삭!</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg mb-2 text-gray-800"><i class="fa-solid fa-bottle-water text-cyan-500 mr-2"></i>스트랩 물통</h4>
+                        <p class="text-sm text-gray-600">아이들이 직접 메고 다니게 하세요. "내 짐은 내가!" 자립심 UP, 엄마 어깨는 가볍게.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destination Explorer Section -->
+    <section id="explorer" class="py-16 bg-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-800">🗺️ 테마별 맞춤 명소 탐색</h2>
+                <p class="text-gray-600 mt-2">원하는 테마를 선택하여 우리 가족에게 딱 맞는 장소를 찾아보세요.</p>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap justify-center gap-3 mb-10" id="filterContainer">
+                <button class="filter-btn px-4 py-2 rounded-full bg-[#FF6B6B] text-white font-medium shadow-md transition transform hover:scale-105" data-filter="all">전체 보기</button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 transition" data-filter="museum">박물관/과학관</button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 transition" data-filter="park">야외 공원</button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 transition" data-filter="theme">테마파크/실내</button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 transition" data-filter="resort">리조트/물놀이</button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 transition" data-filter="food">맛집/카페</button>
+            </div>
+
+            <!-- Places Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="placesGrid">
+                <!-- JS will populate cards here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Survival Secrets Section -->
+    <section id="survival" class="py-16 bg-gray-50">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800">🛡️ 남매 맘의 실전 생존 비법</h2>
+                <p class="text-gray-600 mt-2">나들이의 마무리가 행복해야 진짜 성공입니다.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Conflict Resolution -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">갈등 중재: 귓속말의 마법</h3>
+                    </div>
+                    <p class="text-gray-700 mb-4 leading-relaxed">
+                        싸움이 시작되면 큰 소리 대신 <strong>'귓속말'</strong>을 사용하세요.
+                    </p>
+                    <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400">
+                        <p class="italic text-sm text-gray-700">"사실 엄마는 네 마음 다 알아. 이번엔 네가 정말 잘 참아준 거야. 이건 우리끼리 비밀이야."</p>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-4">
+                        * 8살 첫째에게는 "오늘 동생 대장 해줄래?"라며 역할을 부여하세요.
+                    </p>
+                </div>
+
+                <!-- Return Formula Chart -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                            <i class="fa-solid fa-car-side"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">평화로운 귀가 공식</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">아이들 에너지와 부모님 행복도의 상관관계</p>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="energyChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">든든 식사(밥)</span>
+                        <i class="fa-solid fa-arrow-right text-gray-400 mx-1"></i>
+                        <span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">커피 수혈</span>
+                        <i class="fa-solid fa-arrow-right text-gray-400 mx-1"></i>
+                        <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">차 안 낮잠</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-10 mt-10">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <h3 class="text-2xl font-bold mb-4">완벽하지 않아도 괜찮아요</h3>
+            <p class="text-gray-400 mb-6 max-w-xl mx-auto">
+                계획이 틀어져도 대안은 있고, 아이들은 엄마 아빠와 함께 웃었던 그 찰나의 순간들을 기억할 테니까요.<br>
+                오늘 하루도 고생 많으셨습니다.
+            </p>
+            <div class="border-t border-gray-700 pt-6 mt-6">
+                <p class="text-sm text-gray-500">Copyright © 2026 아이와 함께 성장하는 부모의 실전 기록. All rights reserved.</p>
+                <p class="text-xs text-gray-600 mt-2">본 페이지는 제공된 보고서를 바탕으로 재구성된 인터랙티브 가이드입니다.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Place Detail Modal -->
+    <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-[100] px-4">
+        <div class="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto relative shadow-2xl">
+            <button id="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">
+                <i class="fa-solid fa-times"></i>
+            </button>
+            <div id="modalContent" class="p-6 md:p-8">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // --- Data: Places ---
+        const places = [
+            {
+                id: 1,
+                name: "인천어린이과학관",
+                category: "museum",
+                tags: ["로봇체험", "예약필수", "실내"],
+                summary: "로봇 오목 대결과 댄스 공연이 있는 미래 과학 놀이터",
+                point8: "로봇과의 오목 대결에서 승부욕 발동! '도시마을' 직업 체험 몰입.",
+                point5: "음악에 맞춰 춤추는 로봇 댄스와 귀여운 로봇 강아지에 열광.",
+                tip: "100% 사전 예약제입니다. 입장하자마자 로봇 공연 시간을 체크하세요!"
+            },
+            {
+                id: 2,
+                name: "국립한글박물관",
+                category: "museum",
+                tags: ["학습연계", "무료", "실내놀이터"],
+                summary: "글자가 놀이가 되는 곳. 한글놀이터가 압권.",
+                point8: "학교에서 배운 한글을 미디어 아트로 접하며 학습 동기 부여.",
+                point5: "거대한 한글 숲 미끄럼틀과 볼풀장에서 신체 활동.",
+                tip: "한글놀이터 예약은 치열합니다. 관람 희망일 1주일 전 자정을 노리세요."
+            },
+            {
+                id: 3,
+                name: "서울 물 재생 체험관 & 별빛과학관",
+                category: "museum",
+                tags: ["1+1코스", "마곡", "미끄럼틀"],
+                summary: "물놀이와 우주 체험을 한 번에! 가성비 최고의 코스.",
+                point8: "하수도 과학 원리 이해 & 빛의 굴절 실험 조작.",
+                point5: "2층에서 1층으로 내려오는 대형 미끄럼틀 무한 반복.",
+                tip: "두 곳이 붙어있어요. 물 재생관 관람 후 별빛과학관으로 이동하세요."
+            },
+            {
+                id: 4,
+                name: "서울숲",
+                category: "park",
+                tags: ["야외", "동물교감", "피크닉"],
+                summary: "거대 미끄럼틀과 꽃사슴이 공존하는 도심 힐링 숲.",
+                point8: "모험심을 자극하는 거대 철제 미끄럼틀 정복.",
+                point5: "꽃사슴 먹이 주기 체험으로 정서적 교감.",
+                tip: "주차가 매우 힘듭니다. 주말엔 대중교통이나 오전 10시 이전 도착 추천."
+            },
+            {
+                id: 5,
+                name: "여의도 한강공원",
+                category: "park",
+                tags: ["킥보드", "쇼핑몰연계", "평지"],
+                summary: "경사 없는 평지에서 킥보드 마스터하기.",
+                point8: "넓은 광장에서 자전거나 킥보드 질주.",
+                point5: "버스킹 공연 구경과 비눗방울 놀이.",
+                tip: "너무 더우면 바로 옆 '더현대 서울' 유아휴게실로 대피하세요."
+            },
+            {
+                id: 6,
+                name: "시립 강서 거점형 키움센터",
+                category: "theme",
+                tags: ["가성비", "초등추천", "대형그물"],
+                summary: "초등학생도 시시하지 않은 진짜 키즈카페.",
+                point8: "2층 높이의 대형 그물 시설에서 땀 뻘뻘 흘리며 도전.",
+                point5: "안전한 매트 공간에서 형아 따라다니며 모험.",
+                tip: "서울시 공공서비스 예약 필수. 다둥이 카드 할인 혜택 챙기세요."
+            },
+            {
+                id: 7,
+                name: "서울랜드",
+                category: "theme",
+                tags: ["놀이공원", "공룡", "야외"],
+                summary: "3살 터울 남매가 가장 평화롭게 타협하는 테마파크.",
+                point8: "급류타기, 라바 트위스터 등 스릴 놀이기구 입문.",
+                point5: "쥬라기랜드 공룡 전시와 구름빵 기구 탑승.",
+                tip: "동문 주차장이 놀이공원과 훨씬 가깝습니다."
+            },
+            {
+                id: 8,
+                name: "레고랜드 코리아",
+                category: "theme",
+                tags: ["춘천", "보물찾기", "1박2일"],
+                summary: "리조트 투숙 시 '보물찾기'는 최고의 추억.",
+                point8: "드라이빙 스쿨에서 운전면허 따기 & 금고 비밀번호 풀기.",
+                point5: "듀플로 밸리에서 안전하게 블록 놀이.",
+                tip: "체크인 시간(3시) 전후로 로비가 붐비니 미리 도착해 파크를 먼저 즐기세요."
+            },
+             {
+                id: 9,
+                name: "원마운트 스노우파크",
+                category: "theme",
+                tags: ["일산", "이색썰매", "오로라쇼"],
+                summary: "사계절 내내 겨울왕국! 이색 썰매의 천국.",
+                point8: "다양한 썰매를 바꿔 타며 스피드 즐기기.",
+                point5: "하늘에서 내리는 오로라쇼와 인공 눈에 감탄.",
+                tip: "실내가 꽤 춥습니다. 여름에도 경량 패딩과 장갑 필수!"
+            },
+            {
+                id: 10,
+                name: "히든밸리송추",
+                category: "resort",
+                tags: ["수영장", "취사가능", "고기파티"],
+                summary: "물놀이 후 삼겹살은 진리! 취사 가능한 수영장.",
+                point8: "깊은 풀에서 잠수하며 에너지 발산.",
+                point5: "낮은 풀에서 안전하게 첨벙첨벙.",
+                tip: "좋은 평상 자리를 맡으려면 예약 오픈 즉시 광클 필수."
+            },
+            {
+                id: 11,
+                name: "포레스트아웃팅스",
+                category: "food",
+                tags: ["식물원카페", "좌식자리", "예스키즈존"],
+                summary: "숲속에 온 듯한 초대형 카페. 좌식 자리가 명당.",
+                point8: "화덕 피자 먹방 & 인생샷 남기기.",
+                point5: "개울물 속 물고기 구경하느라 바쁨.",
+                tip: "좌식 자리를 선점하려면 주말 오픈런(10시)을 추천합니다."
+            },
+            {
+                id: 12,
+                name: "영종도 황해해물칼국수",
+                category: "food",
+                tags: ["아이입맛", "웨이팅", "공깃밥"],
+                summary: "국물이 끝내주는 칼국수. 아이들도 한 그릇 뚝딱.",
+                point8: "조개가 산더미라 까먹는 재미.",
+                point5: "국물에 밥 말아주면 조용히 흡입.",
+                tip: "대기가 깁니다. 번호표 뽑고 아이들은 차 안이나 대기실에서 쉬게 하세요."
+            }
+        ];
+
+        // --- Data: Checklist ---
+        const checklistItems = [
+            "나이별 맞춤 간식 (초코바/젤리)",
+            "아이용 가벼운 수저 세트",
+            "스트랩 물통 (각자 1개)",
+            "비밀무기: 계산기, 색종이, 보드게임",
+            "휴대용 보조배터리",
+            "여벌 옷 & 물티슈",
+            "다둥이 행복카드 (해당 시)"
+        ];
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderChecklist();
+            renderPlaces('all');
+            initCharts();
+            setupEventListeners();
+        });
+
+        // --- Functions ---
+
+        function renderChecklist() {
+            const container = document.getElementById('checklistContainer');
+            container.innerHTML = checklistItems.map((item, index) => `
+                <div class="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer checklist-item" onclick="toggleCheck(this)">
+                    <div class="w-5 h-5 border-2 border-gray-300 rounded mr-3 flex items-center justify-center text-white transition-colors">
+                        <i class="fa-solid fa-check text-xs"></i>
+                    </div>
+                    <span class="text-gray-700">${item}</span>
+                </div>
+            `).join('');
+        }
+
+        function toggleCheck(el) {
+            const checkbox = el.querySelector('div');
+            const text = el.querySelector('span');
+            
+            if (checkbox.classList.contains('bg-[#FF6B6B]')) {
+                checkbox.classList.remove('bg-[#FF6B6B]', 'border-[#FF6B6B]');
+                checkbox.classList.add('border-gray-300');
+                text.classList.remove('line-through', 'text-gray-400');
+            } else {
+                checkbox.classList.add('bg-[#FF6B6B]', 'border-[#FF6B6B]');
+                checkbox.classList.remove('border-gray-300');
+                text.classList.add('line-through', 'text-gray-400');
+            }
+        }
+
+        function renderPlaces(filter) {
+            const grid = document.getElementById('placesGrid');
+            grid.innerHTML = '';
+            
+            const filtered = filter === 'all' ? places : places.filter(p => p.category === filter);
+            
+            // Animation delay index
+            let delay = 0;
+
+            filtered.forEach(place => {
+                const card = document.createElement('div');
+                card.className = 'place-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden cursor-pointer flex flex-col h-full';
+                card.style.animation = `fadeIn 0.5s ease forwards ${delay}s`;
+                card.onclick = () => openModal(place);
+
+                // Icon based on category
+                let iconClass = 'fa-map-pin';
+                let bgClass = 'bg-gray-100';
+                let textClass = 'text-gray-500';
+                
+                if(place.category === 'museum') { iconClass = 'fa-flask'; bgClass = 'bg-blue-100'; textClass = 'text-blue-500'; }
+                if(place.category === 'park') { iconClass = 'fa-tree'; bgClass = 'bg-green-100'; textClass = 'text-green-500'; }
+                if(place.category === 'theme') { iconClass = 'fa-rocket'; bgClass = 'bg-purple-100'; textClass = 'text-purple-500'; }
+                if(place.category === 'resort') { iconClass = 'fa-water'; bgClass = 'bg-cyan-100'; textClass = 'text-cyan-500'; }
+                if(place.category === 'food') { iconClass = 'fa-utensils'; bgClass = 'bg-orange-100'; textClass = 'text-orange-500'; }
+
+                card.innerHTML = `
+                    <div class="p-6 flex-grow">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="${bgClass} ${textClass} w-10 h-10 rounded-lg flex items-center justify-center text-lg">
+                                <i class="fa-solid ${iconClass}"></i>
+                            </div>
+                            <div class="flex gap-1 flex-wrap justify-end">
+                                ${place.tags.map(tag => `<span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">#${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">${place.name}</h3>
+                        <p class="text-gray-600 text-sm line-clamp-2">${place.summary}</p>
+                    </div>
+                    <div class="bg-gray-50 px-6 py-3 border-t border-gray-100 flex justify-between items-center">
+                        <span class="text-xs font-semibold text-[#FF6B6B]">자세히 보기</span>
+                        <i class="fa-solid fa-arrow-right text-gray-300 text-sm"></i>
+                    </div>
+                `;
+                grid.appendChild(card);
+                delay += 0.05;
+            });
+        }
+
+        function openModal(place) {
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('modalContent');
+            
+            content.innerHTML = `
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-xs font-bold px-2 py-1 rounded bg-gray-200 text-gray-600 uppercase">${place.category.toUpperCase()}</span>
+                    <h2 class="text-2xl font-bold text-gray-900">${place.name}</h2>
+                </div>
+                <p class="text-gray-600 mb-6 text-lg font-medium">"${place.summary}"</p>
+                
+                <div class="grid md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                        <h4 class="font-bold text-blue-800 mb-2"><i class="fa-solid fa-child mr-2"></i>8살 형아 포인트</h4>
+                        <p class="text-sm text-blue-900">${place.point8}</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-xl border border-green-100">
+                        <h4 class="font-bold text-green-800 mb-2"><i class="fa-solid fa-baby mr-2"></i>5살 동생 포인트</h4>
+                        <p class="text-sm text-green-900">${place.point5}</p>
+                    </div>
+                </div>
+                
+                <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-200 mb-6">
+                    <h4 class="font-bold text-yellow-800 mb-1"><i class="fa-regular fa-lightbulb mr-2"></i>엄마의 리얼 팁</h4>
+                    <p class="text-sm text-yellow-900">${place.tip}</p>
+                </div>
+                
+                <button onclick="closeModalFunc()" class="w-full bg-gray-800 text-white py-3 rounded-lg font-bold hover:bg-gray-700 transition">닫기</button>
+            `;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+
+        function closeModalFunc() {
+            const modal = document.getElementById('detailModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        function setupEventListeners() {
+            // Filter Buttons
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Update active style
+                    buttons.forEach(b => {
+                        b.classList.remove('bg-[#FF6B6B]', 'text-white', 'shadow-md', 'transform', 'scale-105');
+                        b.classList.add('bg-gray-100', 'text-gray-600');
+                    });
+                    btn.classList.remove('bg-gray-100', 'text-gray-600');
+                    btn.classList.add('bg-[#FF6B6B]', 'text-white', 'shadow-md', 'transform', 'scale-105');
+                    
+                    renderPlaces(btn.dataset.filter);
+                });
+            });
+
+            // Modal Close
+            document.getElementById('closeModal').addEventListener('click', closeModalFunc);
+            document.getElementById('detailModal').addEventListener('click', (e) => {
+                if (e.target.id === 'detailModal') closeModalFunc();
+            });
+
+            // Mobile Menu
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            const menu = document.getElementById('mobileMenu');
+            menuBtn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+        }
+
+        function initCharts() {
+            // Chart 1: Intro Distribution (Doughnut)
+            const ctx1 = document.getElementById('introChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['박물관/교육', '야외/에너지', '테마파크', '휴식/맛집'],
+                    datasets: [{
+                        data: [25, 30, 25, 20],
+                        backgroundColor: ['#4ECDC4', '#FF6B6B', '#FFD166', '#A0E7E5'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+                        tooltip: { enabled: true }
+                    },
+                    cutout: '70%'
+                }
+            });
+
+            // Chart 2: Energy Flow (Line)
+            const ctx2 = document.getElementById('energyChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: ['출발', '활동(오전)', '점심', '활동(오후)', '저녁(식사)', '귀가(차안)', '도착'],
+                    datasets: [
+                        {
+                            label: '아이들 에너지',
+                            data: [100, 90, 70, 85, 40, 10, 30],
+                            borderColor: '#FF6B6B',
+                            backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: '부모님 행복도',
+                            data: [80, 70, 60, 50, 90, 100, 95], // 귀가 시 급상승 (육퇴 임박)
+                            borderColor: '#4ECDC4',
+                            borderDash: [5, 5],
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { display: false, min: 0, max: 110 },
+                        x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: { 
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.dataset.label === '부모님 행복도' && context.dataIndex === 5) {
+                                        return '부모님 행복도: 100 (아이들이 잠들었을 때!)';
+                                    }
+                                    return context.dataset.label + ': ' + context.parsed.y;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+    
+    <!-- Placeholder Comments for Structure -->
+    <!-- Chosen Palette: Warm Neutrals (Background) + Soft Red (Accent) + Soft Teal (Secondary) -->
+    <!-- Application Structure Plan: 
+         1. Intro: Core value proposition and overview chart to build trust.
+         2. Checklist: Interactive tool for preparation, solving the 'forgetting' pain point.
+         3. Explorer: The main feature. Tab-based filtering for easy access to specific needs. Modal cards for details to keep the UI clean.
+         4. Survival: Practical advice visualized with a chart to explain the 'energy flow' concept intuitively.
+    -->
+    <!-- Visualization & Content Choices: 
+         1. Doughnut Chart: Quickly shows the balanced mix of locations (Education vs Fun).
+         2. Line Chart: Visualizes the 'Peaceful Return Formula' (Energy levels over time), emphasizing the 'Nap in Car' strategy.
+         3. Font Awesome Icons: Used for intuitive category recognition without heavy images.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</body>
+</html>
